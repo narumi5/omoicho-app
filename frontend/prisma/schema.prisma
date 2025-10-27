@@ -1,0 +1,68 @@
+// Prisma schema for Couple Diary App
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ユーザーモデル
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // カップル関係
+  coupleId  String?
+  couple    Couple?  @relation(fields: [coupleId], references: [id])
+
+  // 作成した日記
+  diaries   Diary[]
+
+  @@map("users")
+}
+
+// カップルモデル
+model Couple {
+  id         String   @id @default(uuid())
+  inviteCode String   @unique @default(cuid())
+  createdAt  DateTime @default(now())
+
+  users      User[]
+  diaries    Diary[]
+
+  @@map("couples")
+}
+
+// 日記モデル
+model Diary {
+  id        String   @id @default(uuid())
+  content   String   @db.Text
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // プライベートフラグ（true: 自分のみ、false: カップル共有）
+  isPrivate Boolean  @default(false)
+
+  // S3画像URL（最大3枚）
+  images    String[] @default([])
+
+  // 作成者
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // カップル
+  coupleId  String
+  couple    Couple   @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+
+  @@index([coupleId, date])
+  @@index([authorId])
+  @@map("diaries")
+}

@@ -1,0 +1,38 @@
+# 本番環境用 Dockerfile (Multi-stage build)
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# 依存関係のインストール
+COPY package*.json ./
+COPY prisma ./prisma/
+
+RUN npm ci
+
+# アプリケーションのコピー
+COPY . .
+
+# Prisma クライアント生成
+RUN npx prisma generate
+
+# Next.js ビルド
+RUN npm run build
+
+# ランナーステージ
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# 必要なファイルのみコピー
+COPY --from=builder /app/next.config.ts ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/prisma ./prisma
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
