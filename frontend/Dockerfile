@@ -1,6 +1,9 @@
 # 開発環境用 Dockerfile
 FROM node:20-alpine
 
+# bcryptのビルドに必要なツールをインストール
+RUN apk add --no-cache python3 make g++
+
 WORKDIR /app
 
 # 依存関係のインストール

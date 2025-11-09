@@ -12,6 +12,8 @@ export type {
   CreateCoupleInput,
   CreateCoupleResponse,
   JoinCoupleInput,
-  CreateUserInput,
+  SignupInput,
+  SignupResponse,
   LoginInput,
+  LoginResponse,
 } from './api';

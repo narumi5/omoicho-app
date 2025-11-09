@@ -1,30 +1,29 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Card } from "@/components/ui/Card";
-import type { SignupInput, SignupResponse, ApiResponse } from "@/types/api";
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Card } from '@/components/ui/Card';
+import type { SignupInput, SignupResponse, ApiResponse } from '@/types/api';
 
 export default function SignupPage() {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
     // パスワード確認チェック
     if (password !== confirmPassword) {
-      setError("パスワードが一致しません");
+      setError('パスワードが一致しません');
       return;
     }
 
@@ -37,42 +36,46 @@ export default function SignupPage() {
         password,
       };
 
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(signupData),
       });
 
-      const result: ApiResponse<SignupResponse> = await response.json();
-
       if (!response.ok) {
-        setError(result.error || "登録に失敗しました");
+        const contentType = response.headers.get('content-type');
+        if (contentType?.includes('application/json')) {
+          const result: ApiResponse<SignupResponse> = await response.json();
+          setError(result.error || '登録に失敗しました');
+        } else {
+          setError('登録に失敗しました');
+        }
         setLoading(false);
         return;
       }
 
+      await response.json();
+
       // 成功時はホームページへリダイレクト
-      router.push("/");
+      router.push('/');
     } catch (err) {
-      console.error("Signup error:", err);
-      setError("通信エラーが発生しました");
+      console.error('Signup error:', err);
+      setError('通信エラーが発生しました');
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-pink flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-pink p-4">
+      <div className="w-full max-w-md">
         {/* サインアップフォーム */}
         <Card className="w-full">
-          <h1 className="text-3xl font-bold text-center text-primary mb-8">
-            新規登録
-          </h1>
+          <h1 className="mb-8 text-center text-3xl font-bold text-primary">新規登録</h1>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
+            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-600">
               {error}
             </div>
           )}
@@ -80,10 +83,7 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* 名前 */}
             <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="name" className="mb-2 block text-sm font-medium text-gray-700">
                 名前
               </label>
               <Input
@@ -98,10 +98,7 @@ export default function SignupPage() {
 
             {/* メールアドレス */}
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-700">
                 メールアドレス
               </label>
               <Input
@@ -116,10 +113,7 @@ export default function SignupPage() {
 
             {/* パスワード */}
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-700">
                 パスワード
               </label>
               <Input
@@ -137,7 +131,7 @@ export default function SignupPage() {
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="mb-2 block text-sm font-medium text-gray-700"
               >
                 パスワード（確認）
               </label>
@@ -154,18 +148,15 @@ export default function SignupPage() {
 
             {/* 送信ボタン */}
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "登録中..." : "登録する"}
+              {loading ? '登録中...' : '登録する'}
             </Button>
           </form>
 
           {/* ログインリンク */}
           <div className="mt-6 text-center">
             <p className="text-gray-600">
-              すでにアカウントをお持ちの方は{" "}
-              <Link
-                href="/login"
-                className="text-primary hover:underline font-semibold"
-              >
+              すでにアカウントをお持ちの方は{' '}
+              <Link href="/login" className="font-semibold text-primary hover:underline">
                 ログイン
               </Link>
             </p>
