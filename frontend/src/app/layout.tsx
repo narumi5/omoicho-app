@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import './globals.css';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 export const metadata: Metadata = {
-  title: "Couple Diary - カップル日記アプリ",
-  description: "カップルで共有する日記アプリ。2人だけの特別な思い出を毎日記録しよう。",
+  title: 'Couple Diary - カップル日記アプリ',
+  description: 'カップルで共有する日記アプリ。2人だけの特別な思い出を毎日記録しよう。',
   icons: {
     icon: '/images/favicon.png',
     shortcut: '/images/favicon.png',
@@ -18,7 +19,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <body>
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

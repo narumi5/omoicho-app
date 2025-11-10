@@ -1,21 +1,30 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
+import { useAuth } from '@/contexts/AuthContext';
 import type { SignupInput, SignupResponse, ApiResponse } from '@/types/api';
 
 export default function SignupPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // すでにログイン済みの場合は日記ページにリダイレクト
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.push('/diary');
+    }
+  }, [user, authLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,14 +67,24 @@ export default function SignupPage() {
 
       await response.json();
 
-      // 成功時はホームページへリダイレクト
-      router.push('/');
+      // 成功時はログインページへリダイレクト
+      router.push('/login');
     } catch (err) {
       console.error('Signup error:', err);
       setError('通信エラーが発生しました');
       setLoading(false);
     }
   };
+
+  // 認証チェック中は何も表示しない
+  if (authLoading) {
+    return null;
+  }
+
+  // すでにログイン済みの場合は何も表示しない（リダイレクト中）
+  if (user) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-pink p-4">

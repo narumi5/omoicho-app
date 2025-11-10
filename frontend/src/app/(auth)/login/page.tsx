@@ -1,19 +1,27 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
-import type { LoginInput, LoginResponse, ApiResponse } from '@/types/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { user, login, loading: authLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // すでにログイン済みの場合は日記ページにリダイレクト
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.push('/diary');
+    }
+  }, [user, authLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,41 +29,25 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const loginData: LoginInput = {
-        email,
-        password,
-      };
-
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(loginData),
-      });
-
-      if (!response.ok) {
-        const contentType = response.headers.get('content-type');
-        if (contentType?.includes('application/json')) {
-          const result: ApiResponse<LoginResponse> = await response.json();
-          setError(result.error || 'ログインに失敗しました');
-        } else {
-          setError('ログインに失敗しました');
-        }
-        setLoading(false);
-        return;
-      }
-
-      await response.json();
-
-      // 成功時はホームページへリダイレクト
-      router.push('/');
+      await login(email, password);
+      // 成功時は日記一覧ページへリダイレクト
+      router.push('/diary');
     } catch (err) {
       console.error('Login error:', err);
-      setError('通信エラーが発生しました');
+      setError(err instanceof Error ? err.message : 'ログインに失敗しました');
       setLoading(false);
     }
   };
+
+  // 認証チェック中は何も表示しない
+  if (authLoading) {
+    return null;
+  }
+
+  // すでにログイン済みの場合は何も表示しない（リダイレクト中）
+  if (user) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-pink p-4">
