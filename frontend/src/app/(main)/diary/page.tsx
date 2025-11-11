@@ -36,12 +36,12 @@ export default function DiaryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-2xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-center mb-8">カップル日記</h1>
+    <div className="min-h-screen py-8">
+      <div className="mx-auto max-w-2xl px-4">
+        <h1 className="mb-8 text-center text-3xl font-bold">カップル日記</h1>
         <DiaryForm onSubmit={handleSubmit} />
         {loading ? (
-          <div className="text-center py-8 text-gray-500">読み込み中...</div>
+          <div className="py-8 text-center text-gray-500">読み込み中...</div>
         ) : (
           <DiaryList diaries={localDiaries.length > 0 ? localDiaries : diaries} />
         )}

@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json(user);
+    return NextResponse.json({ data: user });
   } catch (error) {
     console.error('Get user error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

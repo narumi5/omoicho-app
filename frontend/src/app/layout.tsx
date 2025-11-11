@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body>
+      <body className="bg-gradient-pink">
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
