@@ -1,6 +1,13 @@
 import type { Metadata } from 'next';
+import { Kosugi_Maru } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
+
+const kosugiMaru = Kosugi_Maru({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Couple Diary - カップル日記アプリ',
@@ -19,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body className="bg-gradient-pink">
+      <body className={`${kosugiMaru.className} bg-gradient-pink`}>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

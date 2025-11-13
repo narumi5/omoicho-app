@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import { useAuth } from '@/contexts/AuthContext';
+import { createCouple, joinCouple, getCoupleInfo } from '@/lib/api/couples';
+import { getMe } from '@/lib/api/auth';
 
 interface CoupleData {
   id: string;
@@ -13,7 +15,7 @@ interface CoupleData {
     id: string;
     name: string;
     email: string;
-  };
+  } | null;
 }
 
 export default function CouplePage() {
@@ -27,20 +29,12 @@ export default function CouplePage() {
   useEffect(() => {
     const fetchCoupleData = async () => {
       try {
-        const res = await fetch('/api/auth/me');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.data?.coupleId) {
-            // カップル情報を取得
-            const coupleRes = await fetch(`/api/couples/${data.data.coupleId}`);
-            if (coupleRes.ok) {
-              const coupleInfo = await coupleRes.json();
-              setCoupleData(coupleInfo.data);
-            }
-          } else {
-            // coupleIdがない場合はnullをセット
-            setCoupleData(null);
-          }
+        const meData = await getMe();
+        if (meData.data?.coupleId) {
+          const coupleInfo = await getCoupleInfo(meData.data.coupleId);
+          setCoupleData(coupleInfo.data);
+        } else {
+          setCoupleData(null);
         }
       } catch (error) {
         console.error('Failed to fetch couple data:', error);
@@ -55,24 +49,14 @@ export default function CouplePage() {
   const handleCreateCouple = async () => {
     try {
       setError('');
-      const res = await fetch('/api/couples', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const data = await createCouple();
+      setCoupleData({
+        id: data.data.coupleId,
+        inviteCode: data.data.inviteCode,
       });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setCoupleData({
-          id: data.data.coupleId,
-          inviteCode: data.data.inviteCode,
-        });
-      } else {
-        setError(data.error || 'カップル作成に失敗しました');
-      }
     } catch (error) {
       console.error('Failed to create couple:', error);
-      setError('サーバーエラーが発生しました');
+      setError(error instanceof Error ? error.message : 'カップル作成に失敗しました');
     }
   };
 
@@ -80,22 +64,11 @@ export default function CouplePage() {
     e.preventDefault();
     try {
       setError('');
-      const res = await fetch('/api/couples/join', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ inviteCode }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        window.location.reload();
-      } else {
-        setError(data.error || 'カップル参加に失敗しました');
-      }
+      await joinCouple(inviteCode);
+      window.location.reload();
     } catch (error) {
       console.error('Failed to join couple:', error);
-      setError('サーバーエラーが発生しました');
+      setError(error instanceof Error ? error.message : 'カップル参加に失敗しました');
     }
   };
 
@@ -121,7 +94,24 @@ export default function CouplePage() {
     return (
       <div className="min-h-screen py-8">
         <div className="mx-auto max-w-2xl px-4">
-          <h1 className="mb-8 text-center text-3xl font-bold text-gray-700">カップル設定</h1>
+          <h1 className="mb-8 text-3xl font-bold text-gray-700">設定</h1>
+
+          {/* マイページ情報 */}
+          <Card className="mb-6">
+            <h2 className="mb-4 text-xl font-bold text-gray-700">マイページ</h2>
+            <div className="space-y-3">
+              <div>
+                <p className="text-sm text-gray-500">名前</p>
+                <p className="text-lg font-medium text-gray-700">{user?.name}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">メールアドレス</p>
+                <p className="text-lg font-medium text-gray-700">{user?.email}</p>
+              </div>
+            </div>
+          </Card>
+
+          {/* パートナー情報 */}
           <Card>
             <h2 className="mb-4 text-xl font-bold text-gray-700">パートナー情報</h2>
             <div className="space-y-3">
@@ -144,7 +134,7 @@ export default function CouplePage() {
   return (
     <div className="min-h-screen py-8">
       <div className="mx-auto max-w-2xl px-4">
-        <h1 className="mb-8 text-center text-3xl font-bold text-gray-700">カップル設定</h1>
+        <h1 className="mb-8 text-3xl font-bold text-gray-700">設定</h1>
 
         {error && (
           <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">

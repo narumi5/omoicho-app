@@ -6,7 +6,7 @@ import { verifyToken } from '@/lib/jwt';
  * カップル情報取得
  * GET /api/couples/:id
  */
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // 認証チェック
     const token = req.cookies.get('auth_token')?.value;
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ error: '無効なトークンです' }, { status: 401 });
     }
 
-    const coupleId = params.id;
+    const { id: coupleId } = await params;
 
     // カップル情報取得
     const couple = await prisma.couple.findUnique({

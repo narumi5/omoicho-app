@@ -3,18 +3,38 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
+import { FormField } from '@/components/ui/FormField';
 import { useAuth } from '@/contexts/AuthContext';
+
+const loginSchema = z.object({
+  email: z
+    .string({ message: 'メールアドレスを入力してください' })
+    .email({ message: '有効なメールアドレスを入力してください' }),
+  password: z
+    .string({ message: 'パスワードを入力してください' })
+    .min(6, { message: 'パスワードは6文字以上で入力してください' }),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
   const { user, login, loading: authLoading } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
 
   // すでにログイン済みの場合は日記ページにリダイレクト
   useEffect(() => {
@@ -23,19 +43,16 @@ export default function LoginPage() {
     }
   }, [user, authLoading, router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: LoginFormData) => {
     setError('');
-    setLoading(true);
 
     try {
-      await login(email, password);
+      await login(data.email, data.password);
       // 成功時は日記一覧ページへリダイレクト
       router.push('/diary');
     } catch (err) {
       console.error('Login error:', err);
       setError(err instanceof Error ? err.message : 'ログインに失敗しました');
-      setLoading(false);
     }
   };
 
@@ -61,38 +78,27 @@ export default function LoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-700">
-                メールアドレス
-              </label>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <FormField label="メールアドレス" error={errors.email?.message} htmlFor="email">
               <Input
                 id="email"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@email.com"
-                required
+                {...register('email')}
               />
-            </div>
+            </FormField>
 
-            <div>
-              <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-700">
-                パスワード
-              </label>
+            <FormField label="パスワード" error={errors.password?.message} htmlFor="password">
               <Input
                 id="password"
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 placeholder="6文字以上"
-                minLength={6}
-                required
+                {...register('password')}
               />
-            </div>
+            </FormField>
 
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? 'ログイン中...' : 'ログイン'}
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? 'ログイン中...' : 'ログイン'}
             </Button>
           </form>
 
