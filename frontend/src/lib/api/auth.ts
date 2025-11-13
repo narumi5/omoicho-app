@@ -2,6 +2,8 @@
  * 認証関連のAPI呼び出し
  */
 
+import api from '@/lib/axios';
+
 interface UserData {
   id: string;
   email: string;
@@ -18,26 +20,29 @@ interface MeResponse {
  * 現在のユーザー情報を取得
  */
 export async function getMe(): Promise<MeResponse> {
-  const res = await fetch('/api/auth/me');
-
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.error || 'ユーザー情報の取得に失敗しました');
+  try {
+    const response = await api.get<MeResponse>('/api/auth/me');
+    return response.data;
+  } catch (error) {
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as { response?: { data?: { error?: string } } };
+      throw new Error(axiosError.response?.data?.error || 'ユーザー情報の取得に失敗しました');
+    }
+    throw new Error('ユーザー情報の取得に失敗しました');
   }
-
-  return res.json();
 }
 
 /**
  * ログアウト
  */
 export async function logout(): Promise<void> {
-  const res = await fetch('/api/auth/logout', {
-    method: 'POST',
-  });
-
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.error || 'ログアウトに失敗しました');
+  try {
+    await api.post('/api/auth/logout');
+  } catch (error) {
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as { response?: { data?: { error?: string } } };
+      throw new Error(axiosError.response?.data?.error || 'ログアウトに失敗しました');
+    }
+    throw new Error('ログアウトに失敗しました');
   }
 }

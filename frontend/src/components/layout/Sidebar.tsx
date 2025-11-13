@@ -41,7 +41,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
       {/* サイドバー */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 transform border-r border-gray-200 bg-white transition-transform duration-300 md:relative md:translate-x-0 ${
+        className={`fixed bottom-0 left-0 top-16 z-40 w-64 transform border-r border-gray-200 bg-white transition-transform duration-300 md:relative md:inset-y-0 md:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >

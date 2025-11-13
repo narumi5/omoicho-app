@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Kosugi_Maru } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { ToastProvider } from '@/contexts/ToastContext';
+import { Toaster } from '@/components/ui/Toaster';
 
 const kosugiMaru = Kosugi_Maru({
   weight: '400',
@@ -27,7 +29,12 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={`${kosugiMaru.className} bg-gradient-pink`}>
-        <AuthProvider>{children}</AuthProvider>
+        <ToastProvider>
+          <AuthProvider>
+            {children}
+            <Toaster />
+          </AuthProvider>
+        </ToastProvider>
       </body>
     </html>
   );

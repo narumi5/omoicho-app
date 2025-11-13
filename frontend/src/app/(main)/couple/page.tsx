@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { useAuth } from '@/contexts/AuthContext';
 import { createCouple, joinCouple, getCoupleInfo } from '@/lib/api/couples';
 import { getMe } from '@/lib/api/auth';
+import { useToast } from '@/lib/toast';
 
 interface CoupleData {
   id: string;
@@ -20,6 +21,7 @@ interface CoupleData {
 
 export default function CouplePage() {
   const { user } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [inviteCode, setInviteCode] = useState('');
   const [coupleData, setCoupleData] = useState<CoupleData | null>(null);
   const [error, setError] = useState('');
@@ -54,9 +56,12 @@ export default function CouplePage() {
         id: data.data.coupleId,
         inviteCode: data.data.inviteCode,
       });
+      showSuccess('招待コードを発行しました！');
     } catch (error) {
       console.error('Failed to create couple:', error);
-      setError(error instanceof Error ? error.message : 'カップル作成に失敗しました');
+      const message = error instanceof Error ? error.message : 'カップル作成に失敗しました';
+      setError(message);
+      showError(message);
     }
   };
 
@@ -65,17 +70,20 @@ export default function CouplePage() {
     try {
       setError('');
       await joinCouple(inviteCode);
-      window.location.reload();
+      showSuccess('カップルに参加しました！');
+      setTimeout(() => window.location.reload(), 1000);
     } catch (error) {
       console.error('Failed to join couple:', error);
-      setError(error instanceof Error ? error.message : 'カップル参加に失敗しました');
+      const message = error instanceof Error ? error.message : 'カップル参加に失敗しました';
+      setError(message);
+      showError(message);
     }
   };
 
   const copyToClipboard = () => {
     if (coupleData?.inviteCode) {
       navigator.clipboard.writeText(coupleData.inviteCode);
-      alert('招待コードをコピーしました！');
+      showSuccess('招待コードをコピーしました！');
     }
   };
 
