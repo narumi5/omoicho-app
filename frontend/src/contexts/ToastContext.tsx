@@ -8,6 +8,7 @@ export interface Toast {
   id: string;
   type: ToastType;
   message: string;
+  isAutoClosing?: boolean;
 }
 
 interface ToastContextType {
@@ -36,11 +37,16 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
       setToasts((prev) => [...prev, toast]);
 
-      // ローディング以外は自動で消える
+      // ローディング以外は自動で消える（フェードアウトアニメーション付き）
       if (type !== 'loading') {
         const duration = type === 'error' ? 5000 : type === 'success' ? 3000 : 4000;
         setTimeout(() => {
-          removeToast(id);
+          // フェードアウト開始
+          setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, isAutoClosing: true } : t)));
+          // アニメーション後に削除
+          setTimeout(() => {
+            setToasts((prev) => prev.filter((t) => t.id !== id));
+          }, 400);
         }, duration);
       }
 

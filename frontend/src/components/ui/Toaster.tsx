@@ -1,16 +1,19 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useToast, Toast as ToastType } from '@/contexts/ToastContext';
 
-function Toast({ toast, onRemove }: { toast: ToastType; onRemove: () => void }) {
-  const [isExiting, setIsExiting] = useState(false);
-
+function Toast({
+  toast,
+  onRemove,
+  isManualClose,
+}: {
+  toast: ToastType;
+  onRemove: () => void;
+  isManualClose: boolean;
+}) {
   const handleClose = () => {
-    setIsExiting(true);
-    setTimeout(() => {
-      onRemove();
-    }, 300);
+    onRemove();
   };
 
   const getIcon = () => {
@@ -80,7 +83,7 @@ function Toast({ toast, onRemove }: { toast: ToastType; onRemove: () => void }) 
 
   return (
     <div
-      className={`flex min-w-[300px] max-w-md items-center gap-3 rounded-lg border-l-4 bg-white p-4 shadow-lg ${getBorderColor()} ${isExiting ? 'animate-slide-out' : 'animate-slide-in'} `}
+      className={`flex min-w-[300px] max-w-md items-center gap-3 rounded-lg border-l-4 bg-white p-4 shadow-lg ${getBorderColor()} ${isManualClose || toast.isAutoClosing ? 'animate-fade-out' : 'animate-slide-in'} `}
     >
       {getIcon()}
       <p className="flex-1 text-sm text-gray-700">{toast.message}</p>
@@ -105,12 +108,29 @@ function Toast({ toast, onRemove }: { toast: ToastType; onRemove: () => void }) 
 
 export function Toaster() {
   const { toasts, removeToast } = useToast();
+  const [manualClosing, setManualClosing] = useState<Set<string>>(new Set());
+
+  const handleManualRemove = (id: string) => {
+    setManualClosing((prev) => new Set(prev).add(id));
+    setTimeout(() => {
+      removeToast(id);
+      setManualClosing((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }, 400);
+  };
 
   return (
     <div className="pointer-events-none fixed right-4 top-4 z-50 flex flex-col gap-2">
       {toasts.map((toast) => (
         <div key={toast.id} className="pointer-events-auto">
-          <Toast toast={toast} onRemove={() => removeToast(toast.id)} />
+          <Toast
+            toast={toast}
+            onRemove={() => handleManualRemove(toast.id)}
+            isManualClose={manualClosing.has(toast.id)}
+          />
         </div>
       ))}
     </div>

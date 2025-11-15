@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -102,13 +101,11 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              アカウントをお持ちでない方は{' '}
-              <Link href="/signup" className="font-semibold text-primary hover:underline">
-                新規登録
-              </Link>
-            </p>
+          <div className="mt-6 border-t border-gray-200 pt-6">
+            <p className="mb-3 text-center text-sm text-gray-600">アカウントをお持ちでない方</p>
+            <Button as="link" href="/signup" variant="outline" className="w-full">
+              新規登録
+            </Button>
           </div>
         </Card>
       </div>

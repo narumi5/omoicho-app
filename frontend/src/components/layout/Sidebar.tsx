@@ -36,21 +36,21 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     <>
       {/* オーバーレイ（モバイル） */}
       {isOpen && (
-        <div className="fixed inset-0 z-30 bg-black bg-opacity-50 md:hidden" onClick={onClose} />
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 md:hidden" onClick={onClose} />
       )}
 
       {/* サイドバー */}
       <aside
-        className={`fixed bottom-0 left-0 top-16 z-40 w-64 transform border-r border-gray-200 bg-white transition-transform duration-300 md:relative md:inset-y-0 md:translate-x-0 ${
+        className={`fixed bottom-0 left-0 top-0 z-50 w-64 transform border-r border-gray-200 bg-white transition-transform duration-300 md:relative md:top-auto md:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex h-full flex-col">
           {/* ヘッダー */}
-          <div className="flex items-center justify-between border-b border-gray-200 p-6">
+          <div className="flex items-center justify-between border-b border-gray-200 px-4 py-2">
             <div>
-              <h1 className="text-2xl font-bold text-primary">想い帳</h1>
-              {user && <p className="mt-2 text-sm text-gray-600">{user.name}</p>}
+              <h1 className="hidden text-2xl font-bold text-primary md:block">想い帳</h1>
+              {user && <p className="text-sm text-gray-600 md:mt-1">{user.name}</p>}
             </div>
             {/* 閉じるボタン（モバイルのみ） */}
             <button onClick={onClose} className="rounded-lg p-2 hover:bg-gray-100 md:hidden">

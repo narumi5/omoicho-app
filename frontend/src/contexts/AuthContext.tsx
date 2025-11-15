@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       const response = await api.post('/api/auth/login', { email, password });
-      setUser(response.data.data);
+      setUser(response.data);
     } catch (error) {
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as { response?: { data?: { error?: string } } };

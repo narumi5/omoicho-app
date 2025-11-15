@@ -2,16 +2,17 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/lib/toast';
 import type { SignupInput, SignupResponse, ApiResponse } from '@/types/api';
 
 export default function SignupPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -57,9 +58,12 @@ export default function SignupPage() {
         const contentType = response.headers.get('content-type');
         if (contentType?.includes('application/json')) {
           const result: ApiResponse<SignupResponse> = await response.json();
-          setError(result.error || '登録に失敗しました');
+          const errorMessage = result.error || '登録に失敗しました';
+          setError(errorMessage);
+          showError(errorMessage);
         } else {
           setError('登録に失敗しました');
+          showError('登録に失敗しました');
         }
         setLoading(false);
         return;
@@ -68,10 +72,15 @@ export default function SignupPage() {
       await response.json();
 
       // 成功時はログインページへリダイレクト
-      router.push('/login');
+      showSuccess('アカウントを作成しました！');
+      setTimeout(() => {
+        router.push('/login');
+      }, 1000);
     } catch (err) {
       console.error('Signup error:', err);
-      setError('通信エラーが発生しました');
+      const errorMessage = '通信エラーが発生しました';
+      setError(errorMessage);
+      showError(errorMessage);
       setLoading(false);
     }
   };
@@ -172,13 +181,11 @@ export default function SignupPage() {
           </form>
 
           {/* ログインリンク */}
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              すでにアカウントをお持ちの方は{' '}
-              <Link href="/login" className="font-semibold text-primary hover:underline">
-                ログイン
-              </Link>
-            </p>
+          <div className="mt-6 border-t border-gray-200 pt-6">
+            <p className="mb-3 text-center text-sm text-gray-600">すでにアカウントをお持ちの方</p>
+            <Button as="link" href="/login" variant="outline" className="w-full">
+              ログイン
+            </Button>
           </div>
         </Card>
       </div>

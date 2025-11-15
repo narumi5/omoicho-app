@@ -5,11 +5,15 @@ import { useRouter } from 'next/navigation';
 import { DiaryForm } from '@/components/diary/DiaryForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { getMe } from '@/lib/api/auth';
+import { getCoupleInfo } from '@/lib/api/couples';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 
 export default function NewDiaryPage() {
   const router = useRouter();
   const { user } = useAuth();
   const [coupleId, setCoupleId] = useState<string | null>(null);
+  const [hasPartner, setHasPartner] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,9 +22,11 @@ export default function NewDiaryPage() {
         const meData = await getMe();
         if (meData.data?.coupleId) {
           setCoupleId(meData.data.coupleId);
+          // パートナーがいるか確認
+          const coupleInfo = await getCoupleInfo(meData.data.coupleId);
+          setHasPartner(!!coupleInfo.data?.partner);
         } else {
-          alert('カップル設定が必要です');
-          router.push('/couple');
+          setHasPartner(false);
         }
       } catch (error) {
         console.error('Failed to fetch user data:', error);
@@ -65,7 +71,7 @@ export default function NewDiaryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen py-8">
+      <div className="py-8">
         <div className="mx-auto max-w-2xl px-4 text-center">
           <p className="text-gray-500">読み込み中...</p>
         </div>
@@ -73,8 +79,24 @@ export default function NewDiaryPage() {
     );
   }
 
+  // パートナー未設定の場合
+  if (!hasPartner) {
+    return (
+      <div className="py-8">
+        <div className="mx-auto max-w-md px-4">
+          <Card className="text-center">
+            <p className="mb-6 text-gray-600">日記を書くにはパートナー設定をしてください</p>
+            <Button as="link" href="/diary" className="w-full">
+              ホームへ
+            </Button>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen py-8">
+    <div className="py-8">
       <div className="mx-auto max-w-2xl px-4">
         <h1 className="mb-8 text-3xl font-bold text-gray-700">日記を書く</h1>
         <DiaryForm onSubmit={handleSubmit} />
