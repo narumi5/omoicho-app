@@ -31,35 +31,32 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
-  const showToast = useCallback(
-    (message: string, type: ToastType = 'info') => {
-      const id = Math.random().toString(36).substring(7);
-      const toast: Toast = { id, type, message };
+  const showToast = useCallback((message: string, type: ToastType = 'info') => {
+    const id = Math.random().toString(36).substring(7);
+    const toast: Toast = { id, type, message };
 
-      setToasts((prev) => [...prev, toast]);
+    setToasts((prev) => [...prev, toast]);
 
-      // ローディング以外は自動で消える（フェードアウトアニメーション付き）
-      if (type !== 'loading') {
-        const duration =
-          type === 'error'
-            ? TOAST.DURATION.ERROR
-            : type === 'success'
-              ? TOAST.DURATION.SUCCESS
-              : TOAST.DURATION.INFO;
+    // ローディング以外は自動で消える（フェードアウトアニメーション付き）
+    if (type !== 'loading') {
+      const duration =
+        type === 'error'
+          ? TOAST.DURATION.ERROR
+          : type === 'success'
+            ? TOAST.DURATION.SUCCESS
+            : TOAST.DURATION.INFO;
+      setTimeout(() => {
+        // フェードアウト開始
+        setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, isAutoClosing: true } : t)));
+        // アニメーション後に削除
         setTimeout(() => {
-          // フェードアウト開始
-          setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, isAutoClosing: true } : t)));
-          // アニメーション後に削除
-          setTimeout(() => {
-            setToasts((prev) => prev.filter((t) => t.id !== id));
-          }, TOAST.ANIMATION_DURATION);
-        }, duration);
-      }
+          setToasts((prev) => prev.filter((t) => t.id !== id));
+        }, TOAST.ANIMATION_DURATION);
+      }, duration);
+    }
 
-      return id;
-    },
-    [removeToast]
-  );
+    return id;
+  }, []);
 
   const showSuccess = useCallback(
     (message: string) => {
