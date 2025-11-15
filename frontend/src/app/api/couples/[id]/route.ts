@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { verifyToken } from '@/lib/jwt';
+import { requireAuth } from '@/lib/auth';
 
 /**
  * カップル情報取得
@@ -9,15 +9,9 @@ import { verifyToken } from '@/lib/jwt';
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // 認証チェック
-    const token = req.cookies.get('auth_token')?.value;
-    if (!token) {
-      return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
-    }
-
-    const payload = verifyToken(token);
-    if (!payload) {
-      return NextResponse.json({ error: '無効なトークンです' }, { status: 401 });
-    }
+    const auth = requireAuth(req);
+    if (auth.error) return auth.error;
+    const { user: payload } = auth;
 
     const { id: coupleId } = await params;
 

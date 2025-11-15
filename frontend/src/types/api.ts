@@ -37,6 +37,16 @@ export interface JoinCoupleInput {
   inviteCode: string;
 }
 
+export interface CoupleInfoResponse {
+  id: string;
+  inviteCode: string;
+  partner?: {
+    id: string;
+    name: string;
+    email: string;
+  } | null;
+}
+
 // ユーザー関連
 export interface SignupInput {
   email: string;

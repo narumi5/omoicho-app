@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { requireAuth } from '@/lib/auth';
 
 /**
  * 日記詳細取得
@@ -7,6 +8,10 @@ import { prisma } from '@/lib/prisma';
  */
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const auth = requireAuth(req);
+    if (auth.error) return auth.error;
+    const { user: payload } = auth;
+
     const { id } = await params;
     const diary = await prisma.diary.findUnique({
       where: { id },
@@ -15,6 +20,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           select: {
             id: true,
             name: true,
+            email: true,
           },
         },
       },
@@ -24,7 +30,28 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Diary not found' }, { status: 404 });
     }
 
-    return NextResponse.json(diary);
+    // プライベート日記の場合、作成者のみ閲覧可能
+    if (diary.isPrivate && diary.authorId !== payload.userId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // カップルメンバーかチェック
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+    });
+
+    if (!user || user.coupleId !== diary.coupleId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    return NextResponse.json({
+      id: diary.id,
+      content: diary.content,
+      date: diary.date,
+      isPrivate: diary.isPrivate,
+      images: [],
+      author: diary.author,
+    });
   } catch (error) {
     console.error('Error fetching diary:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

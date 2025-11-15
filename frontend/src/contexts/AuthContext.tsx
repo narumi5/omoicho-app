@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/axios';
+import { getErrorMessage, logError } from '@/lib/error-handler';
 
 interface User {
   id: string;
@@ -36,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await api.get('/api/auth/me');
       setUser(response.data.data);
     } catch (error) {
-      console.error('Failed to fetch user:', error);
+      logError('Refresh user', error);
       setUser(null);
     } finally {
       setLoading(false);
@@ -48,11 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await api.post('/api/auth/login', { email, password });
       setUser(response.data);
     } catch (error) {
-      if (error && typeof error === 'object' && 'response' in error) {
-        const axiosError = error as { response?: { data?: { error?: string } } };
-        throw new Error(axiosError.response?.data?.error || 'ログインに失敗しました');
-      }
-      throw new Error('ログインに失敗しました');
+      throw new Error(getErrorMessage(error));
     }
   };
 
@@ -60,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await api.post('/api/auth/logout');
     } catch (error) {
-      console.error('Logout error:', error);
+      logError('Logout', error);
     } finally {
       setUser(null);
       router.push('/login');

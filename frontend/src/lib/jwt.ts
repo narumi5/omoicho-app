@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
+import { AUTH } from './constants';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-const JWT_EXPIRES_IN = '7d'; // 7日間有効
+const JWT_EXPIRES_IN = AUTH.JWT_EXPIRES_IN;
 
 export interface JWTPayload {
   userId: string;

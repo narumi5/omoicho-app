@@ -23,7 +23,7 @@ export function Button({
   as = 'button',
 }: ButtonProps) {
   const baseStyle =
-    'inline-flex items-center justify-center px-8 py-3 rounded-full font-medium transition-all active:scale-95';
+    'inline-flex items-center justify-center px-4 py-2 rounded-full font-medium transition-all active:scale-95';
   const variantStyles = {
     primary: 'bg-primary text-white hover:bg-primary-dark shadow-lg hover:shadow-xl',
     secondary:

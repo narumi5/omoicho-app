@@ -1,7 +1,8 @@
 import { serialize, parse } from 'cookie';
 import { NextRequest, NextResponse } from 'next/server';
+import { AUTH } from './constants';
 
-const TOKEN_NAME = 'auth_token';
+const TOKEN_NAME = AUTH.TOKEN_NAME;
 
 export interface CookieOptions {
   maxAge?: number;
@@ -19,7 +20,7 @@ const defaultCookieOptions: CookieOptions = {
   secure: process.env.NODE_ENV === 'production', // 本番環境のみHTTPS必須
   sameSite: 'lax',
   path: '/',
-  maxAge: 60 * 60 * 24 * 7, // 7日間
+  maxAge: AUTH.COOKIE_MAX_AGE,
 };
 
 /**

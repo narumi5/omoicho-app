@@ -8,26 +8,18 @@ import { useDiaries } from '@/hooks/useDiaries';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
+import { Loading } from '@/components/ui/Loading';
 import { PenLine } from 'lucide-react';
 import { getMe } from '@/lib/api/auth';
 import { createCouple, joinCouple, getCoupleInfo } from '@/lib/api/couples';
 import { useToast } from '@/lib/toast';
-
-interface CoupleData {
-  id: string;
-  inviteCode: string;
-  partner?: {
-    id: string;
-    name: string;
-    email: string;
-  } | null;
-}
+import { CoupleInfoResponse } from '@/types/api';
 
 export default function DiaryPage() {
   const router = useRouter();
   const { showSuccess, showError } = useToast();
   const [coupleId, setCoupleId] = useState<string | null>(null);
-  const [coupleData, setCoupleData] = useState<CoupleData | null>(null);
+  const [coupleData, setCoupleData] = useState<CoupleInfoResponse | null>(null);
   const [inviteCode, setInviteCode] = useState('');
   const [error, setError] = useState('');
   const [userLoading, setUserLoading] = useState(true);
@@ -113,19 +105,13 @@ export default function DiaryPage() {
   };
 
   if (userLoading) {
-    return (
-      <div className="py-8">
-        <div className="mx-auto max-w-2xl px-4 text-center">
-          <p className="text-gray-500">読み込み中...</p>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   // パートナー設定済みの場合
   if (coupleData?.partner) {
     return (
-      <div className="py-8">
+      <div className="mt-2 py-8">
         <div className="mx-auto max-w-2xl px-4">
           <div className="mb-8 flex items-center justify-between">
             <h1 className="text-3xl font-bold text-gray-700">日記一覧</h1>

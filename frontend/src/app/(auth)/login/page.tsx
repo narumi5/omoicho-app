@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import { FormField } from '@/components/ui/FormField';
+import { Alert } from '@/components/ui/Alert';
 import { useAuth } from '@/contexts/AuthContext';
 
 const loginSchema = z.object({
@@ -72,9 +73,9 @@ export default function LoginPage() {
           <h1 className="mb-8 text-center text-3xl font-bold text-primary">ログイン</h1>
 
           {error && (
-            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-600">
+            <Alert variant="error" className="mb-6">
               {error}
-            </div>
+            </Alert>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

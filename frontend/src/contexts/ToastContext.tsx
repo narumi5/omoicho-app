@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import { TOAST } from '@/lib/constants';
 
 export type ToastType = 'success' | 'error' | 'info' | 'loading';
 
@@ -39,14 +40,19 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
       // ローディング以外は自動で消える（フェードアウトアニメーション付き）
       if (type !== 'loading') {
-        const duration = type === 'error' ? 5000 : type === 'success' ? 3000 : 4000;
+        const duration =
+          type === 'error'
+            ? TOAST.DURATION.ERROR
+            : type === 'success'
+              ? TOAST.DURATION.SUCCESS
+              : TOAST.DURATION.INFO;
         setTimeout(() => {
           // フェードアウト開始
           setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, isAutoClosing: true } : t)));
           // アニメーション後に削除
           setTimeout(() => {
             setToasts((prev) => prev.filter((t) => t.id !== id));
-          }, 400);
+          }, TOAST.ANIMATION_DURATION);
         }, duration);
       }
 

@@ -3,6 +3,7 @@
  */
 
 import api from '@/lib/axios';
+import { handleError } from '../error-handler';
 
 interface CoupleCreateResponse {
   message: string;
@@ -41,11 +42,7 @@ export async function createCouple(): Promise<CoupleCreateResponse> {
     const response = await api.post<CoupleCreateResponse>('/api/couples');
     return response.data;
   } catch (error) {
-    if (error && typeof error === 'object' && 'response' in error) {
-      const axiosError = error as { response?: { data?: { error?: string } } };
-      throw new Error(axiosError.response?.data?.error || 'カップル作成に失敗しました');
-    }
-    throw new Error('カップル作成に失敗しました');
+    throw new Error(handleError('createCouple', error));
   }
 }
 
@@ -57,11 +54,7 @@ export async function joinCouple(inviteCode: string): Promise<CoupleJoinResponse
     const response = await api.post<CoupleJoinResponse>('/api/couples/join', { inviteCode });
     return response.data;
   } catch (error) {
-    if (error && typeof error === 'object' && 'response' in error) {
-      const axiosError = error as { response?: { data?: { error?: string } } };
-      throw new Error(axiosError.response?.data?.error || 'カップル参加に失敗しました');
-    }
-    throw new Error('カップル参加に失敗しました');
+    throw new Error(handleError('joinCouple', error));
   }
 }
 
@@ -73,10 +66,6 @@ export async function getCoupleInfo(coupleId: string): Promise<CoupleInfoRespons
     const response = await api.get<CoupleInfoResponse>(`/api/couples/${coupleId}`);
     return response.data;
   } catch (error) {
-    if (error && typeof error === 'object' && 'response' in error) {
-      const axiosError = error as { response?: { data?: { error?: string } } };
-      throw new Error(axiosError.response?.data?.error || 'カップル情報の取得に失敗しました');
-    }
-    throw new Error('カップル情報の取得に失敗しました');
+    throw new Error(handleError('getCoupleInfo', error));
   }
 }

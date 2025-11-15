@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Diary } from '@/types';
 import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 
 interface DiaryCardProps {
   diary: Diary;
@@ -21,9 +22,20 @@ export function DiaryCard({ diary }: DiaryCardProps) {
           <span className="rounded bg-gray-200 px-2 py-1 text-xs text-gray-700">プライベート</span>
         )}
       </div>
-      <p className="mb-4 whitespace-pre-wrap text-gray-800">{diary.content}</p>
+      <p
+        className="mb-4 overflow-hidden break-words text-gray-800"
+        style={{
+          display: '-webkit-box',
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: 'vertical',
+          wordBreak: 'break-word',
+          overflowWrap: 'anywhere',
+        }}
+      >
+        {diary.content}
+      </p>
       {diary.images.length > 0 && (
-        <div className="grid grid-cols-3 gap-2">
+        <div className="mb-4 grid grid-cols-3 gap-2">
           {diary.images.map((image, index) => (
             <div key={index} className="relative h-32 w-full">
               <Image src={image} alt={`Image ${index + 1}`} fill className="rounded object-cover" />
@@ -31,6 +43,11 @@ export function DiaryCard({ diary }: DiaryCardProps) {
           ))}
         </div>
       )}
+      <div className="flex justify-end">
+        <Button as="link" href={`/diary/${diary.id}`} variant="outline" className="text-sm">
+          詳細
+        </Button>
+      </div>
     </Card>
   );
 }

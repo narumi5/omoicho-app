@@ -1,52 +1,25 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Card } from '@/components/ui/Card';
+import { Loading } from '@/components/ui/Loading';
 import { useAuth } from '@/contexts/AuthContext';
-import { getCoupleInfo } from '@/lib/api/couples';
-import { getMe } from '@/lib/api/auth';
-
-interface CoupleData {
-  id: string;
-  inviteCode: string;
-  partner?: {
-    id: string;
-    name: string;
-    email: string;
-  } | null;
-}
+import { useUserWithCouple } from '@/hooks/useUserWithCouple';
+import { Alert } from '@/components/ui/Alert';
 
 export default function CouplePage() {
   const { user } = useAuth();
-  const [coupleData, setCoupleData] = useState<CoupleData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  // カップル情報を取得
-  useEffect(() => {
-    const fetchCoupleData = async () => {
-      try {
-        const meData = await getMe();
-        if (meData.data?.coupleId) {
-          const coupleInfo = await getCoupleInfo(meData.data.coupleId);
-          setCoupleData(coupleInfo.data);
-        } else {
-          setCoupleData(null);
-        }
-      } catch (error) {
-        console.error('Failed to fetch couple data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCoupleData();
-  }, []);
+  const { coupleData, loading, error } = useUserWithCouple();
 
   if (loading) {
+    return <Loading />;
+  }
+
+  if (error) {
     return (
       <div className="py-8">
-        <div className="mx-auto max-w-2xl px-4 text-center">
-          <p className="text-gray-500">読み込み中...</p>
+        <div className="mx-auto max-w-2xl px-4">
+          <Alert variant="error">{error}</Alert>
         </div>
       </div>
     );

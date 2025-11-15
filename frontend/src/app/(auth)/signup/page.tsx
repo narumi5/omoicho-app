@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
+import { Alert } from '@/components/ui/Alert';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/lib/toast';
 import type { SignupInput, SignupResponse, ApiResponse } from '@/types/api';
@@ -103,9 +104,9 @@ export default function SignupPage() {
           <h1 className="mb-8 text-center text-3xl font-bold text-primary">新規登録</h1>
 
           {error && (
-            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-600">
+            <Alert variant="error" className="mb-6">
               {error}
-            </div>
+            </Alert>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">

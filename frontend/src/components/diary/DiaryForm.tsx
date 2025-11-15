@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/Button';
+import { VALIDATION } from '@/lib/constants';
 
 interface DiaryFormProps {
   onSubmit: (content: string, isPrivate: boolean) => void;
@@ -20,15 +21,19 @@ export function DiaryForm({ onSubmit }: DiaryFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 mb-6">
+    <form onSubmit={handleSubmit} className="mb-6 rounded-lg bg-white p-6 shadow-md">
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="今日の出来事を書く..."
-        className="w-full h-32 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+        className="mb-4 h-32 w-full rounded border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+        maxLength={VALIDATION.DIARY_MAX_LENGTH}
         required
       />
-      <div className="flex justify-between items-center">
+      <p className="mb-4 text-right text-xs text-gray-500">
+        {content.length} / {VALIDATION.DIARY_MAX_LENGTH}文字
+      </p>
+      <div className="flex items-center justify-between">
         <label className="flex items-center">
           <input
             type="checkbox"
@@ -36,7 +41,7 @@ export function DiaryForm({ onSubmit }: DiaryFormProps) {
             onChange={(e) => setIsPrivate(e.target.checked)}
             className="mr-2"
           />
-          <span className="text-sm text-gray-700">プライベート（自分だけ）</span>
+          <span className="text-[12px] text-gray-700 sm:text-sm">プライベート（自分だけ）</span>
         </label>
         <Button type="submit">投稿</Button>
       </div>
