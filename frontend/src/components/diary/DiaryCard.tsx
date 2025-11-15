@@ -1,6 +1,8 @@
 import React from 'react';
+import Image from 'next/image';
 import { Diary } from '@/types';
 import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 
 interface DiaryCardProps {
   diary: Diary;
@@ -9,32 +11,43 @@ interface DiaryCardProps {
 export function DiaryCard({ diary }: DiaryCardProps) {
   return (
     <Card className="mb-4">
-      <div className="flex justify-between items-start mb-2">
+      <div className="mb-2 flex items-start justify-between">
         <div>
-          <h3 className="font-bold text-lg">{diary.author?.name}</h3>
+          <h3 className="text-lg font-bold">{diary.author?.name}</h3>
           <p className="text-sm text-gray-500">
             {new Date(diary.date).toLocaleDateString('ja-JP')}
           </p>
         </div>
         {diary.isPrivate && (
-          <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded">
-            プライベート
-          </span>
+          <span className="rounded bg-gray-200 px-2 py-1 text-xs text-gray-700">プライベート</span>
         )}
       </div>
-      <p className="text-gray-800 whitespace-pre-wrap mb-4">{diary.content}</p>
+      <p
+        className="mb-4 overflow-hidden break-words text-gray-800"
+        style={{
+          display: '-webkit-box',
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: 'vertical',
+          wordBreak: 'break-word',
+          overflowWrap: 'anywhere',
+        }}
+      >
+        {diary.content}
+      </p>
       {diary.images.length > 0 && (
-        <div className="grid grid-cols-3 gap-2">
+        <div className="mb-4 grid grid-cols-3 gap-2">
           {diary.images.map((image, index) => (
-            <img
-              key={index}
-              src={image}
-              alt={`Image ${index + 1}`}
-              className="w-full h-32 object-cover rounded"
-            />
+            <div key={index} className="relative h-32 w-full">
+              <Image src={image} alt={`Image ${index + 1}`} fill className="rounded object-cover" />
+            </div>
           ))}
         </div>
       )}
+      <div className="flex justify-end">
+        <Button as="link" href={`/diary/${diary.id}`} variant="outline" className="text-sm">
+          詳細
+        </Button>
+      </div>
     </Card>
   );
 }

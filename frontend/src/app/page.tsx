@@ -1,26 +1,26 @@
-import Link from "next/link";
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-pink">
+    <main className="min-h-screen">
       {/* Hero Section */}
-      <div className="flex items-center justify-center min-h-screen px-4 py-12 md:py-20">
-        <div className="text-center max-w-4xl w-full">
+      <div className="flex min-h-screen items-center justify-center px-4 py-12 md:py-20">
+        <div className="w-full max-w-4xl text-center">
           <div className="mb-8 md:mb-10">
             {/* Logo */}
-            <div className="flex justify-center mb-6 md:mb-8">
+            <div className="mb-6 flex justify-center md:mb-8">
               <Image
                 src="/images/logo.png"
                 alt="Couple Diary Logo"
                 width={320}
                 height={240}
-                className="w-64 h-48 md:w-80 md:h-60 object-contain hover:scale-105 transition-transform duration-300"
+                className="h-48 w-64 object-contain transition-transform duration-300 hover:scale-105 md:h-60 md:w-80"
                 priority
               />
             </div>
 
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 leading-tight px-2">
+            <h1 className="mb-4 px-2 text-4xl font-bold leading-tight md:mb-6 md:text-6xl lg:text-7xl">
               <span className="bg-gradient-primary bg-clip-text text-transparent">
                 2人の思い出を
               </span>
@@ -28,61 +28,65 @@ export default function Home() {
               <span className="text-gray-700">毎日記録しよう</span>
             </h1>
 
-            <div className="inline-block mb-4 md:mb-6 px-4 md:px-6 py-2 bg-accent-pink rounded-full">
-              <span className="text-xs md:text-sm font-medium text-accent-pink-soft">
+            <div className="mb-4 inline-block rounded-full bg-accent-pink px-4 py-2 md:mb-6 md:px-6">
+              <span className="text-xs font-medium text-accent-pink-soft md:text-sm">
                 ✨ カップル専用日記アプリ
               </span>
             </div>
-            <p className="text-base md:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed px-4">
+            <p className="mx-auto max-w-2xl px-4 text-base leading-relaxed text-gray-500 md:text-xl">
               カップル専用の日記で、お互いの日常を共有。
               <br />
               プライベートな日記も書けて、写真も一緒に残せます。
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center mb-12 md:mb-16 px-4">
+          <div className="mb-12 flex flex-col justify-center gap-3 px-4 sm:flex-row md:mb-16 md:gap-4">
             <Link
               href="/signup"
-              className="bg-primary text-white px-8 md:px-10 py-3 md:py-4 rounded-full text-base md:text-lg font-medium hover:bg-primary-dark transition-all shadow-lg hover:shadow-xl active:scale-95"
+              className="rounded-full bg-primary px-8 py-3 text-base font-medium text-white shadow-lg transition-all hover:bg-primary-dark hover:shadow-xl active:scale-95 md:px-10 md:py-4 md:text-lg"
             >
               無料ではじめる
             </Link>
             <Link
               href="/login"
-              className="bg-white text-primary px-8 md:px-10 py-3 md:py-4 rounded-full text-base md:text-lg font-medium border-2 border-primary-pale hover:bg-surface-pink hover:border-primary transition-all shadow-md hover:shadow-lg active:scale-95"
+              className="rounded-full border-2 border-primary-pale bg-white px-8 py-3 text-base font-medium text-primary shadow-md transition-all hover:border-primary hover:bg-surface-pink hover:shadow-lg active:scale-95 md:px-10 md:py-4 md:text-lg"
             >
               ログイン
             </Link>
           </div>
 
           {/* Features Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mt-12 md:mt-20 px-2">
-            <div className="bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-lg active:scale-95 md:hover:shadow-xl transition-all md:transform md:hover:-translate-y-2">
-              <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-icon rounded-xl md:rounded-2xl flex items-center justify-center text-2xl md:text-3xl mb-3 md:mb-4 mx-auto">
+          <div className="mt-12 grid grid-cols-1 gap-4 px-2 md:mt-20 md:grid-cols-3 md:gap-8">
+            <div className="rounded-2xl bg-white p-6 shadow-lg transition-all active:scale-95 md:transform md:rounded-3xl md:p-8 md:hover:-translate-y-2 md:hover:shadow-xl">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-icon text-2xl md:mb-4 md:h-16 md:w-16 md:rounded-2xl md:text-3xl">
                 💕
               </div>
-              <h3 className="text-lg md:text-xl font-bold text-gray-700 mb-2 md:mb-3">2人で共有</h3>
-              <p className="text-sm md:text-base text-gray-500 leading-relaxed">
+              <h3 className="mb-2 text-lg font-bold text-gray-700 md:mb-3 md:text-xl">2人で共有</h3>
+              <p className="text-sm leading-relaxed text-gray-500 md:text-base">
                 カップル専用の日記で、お互いの日常を共有。離れていても心は近くに。
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-lg active:scale-95 md:hover:shadow-xl transition-all md:transform md:hover:-translate-y-2">
-              <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-icon rounded-xl md:rounded-2xl flex items-center justify-center text-2xl md:text-3xl mb-3 md:mb-4 mx-auto">
+            <div className="rounded-2xl bg-white p-6 shadow-lg transition-all active:scale-95 md:transform md:rounded-3xl md:p-8 md:hover:-translate-y-2 md:hover:shadow-xl">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-icon text-2xl md:mb-4 md:h-16 md:w-16 md:rounded-2xl md:text-3xl">
                 🔒
               </div>
-              <h3 className="text-lg md:text-xl font-bold text-gray-700 mb-2 md:mb-3">プライベートも</h3>
-              <p className="text-sm md:text-base text-gray-500 leading-relaxed">
+              <h3 className="mb-2 text-lg font-bold text-gray-700 md:mb-3 md:text-xl">
+                プライベートも
+              </h3>
+              <p className="text-sm leading-relaxed text-gray-500 md:text-base">
                 自分だけの秘密の日記も書ける。共有と使い分けて自由に記録。
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-lg active:scale-95 md:hover:shadow-xl transition-all md:transform md:hover:-translate-y-2">
-              <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-icon rounded-xl md:rounded-2xl flex items-center justify-center text-2xl md:text-3xl mb-3 md:mb-4 mx-auto">
+            <div className="rounded-2xl bg-white p-6 shadow-lg transition-all active:scale-95 md:transform md:rounded-3xl md:p-8 md:hover:-translate-y-2 md:hover:shadow-xl">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-icon text-2xl md:mb-4 md:h-16 md:w-16 md:rounded-2xl md:text-3xl">
                 📸
               </div>
-              <h3 className="text-lg md:text-xl font-bold text-gray-700 mb-2 md:mb-3">写真も投稿</h3>
-              <p className="text-sm md:text-base text-gray-500 leading-relaxed">
+              <h3 className="mb-2 text-lg font-bold text-gray-700 md:mb-3 md:text-xl">
+                写真も投稿
+              </h3>
+              <p className="text-sm leading-relaxed text-gray-500 md:text-base">
                 最大3枚の写真で思い出を鮮やかに。大切な瞬間を残そう。
               </p>
             </div>
@@ -91,13 +95,13 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <div className="text-center pb-8 px-4">
-        <div className="text-xs md:text-sm text-gray-400 flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-0">
-          <Link href="/diary" className="hover:text-primary transition-colors sm:mx-2">
+      <div className="px-4 pb-8 text-center">
+        <div className="flex flex-col items-center justify-center gap-2 text-xs text-gray-400 sm:flex-row sm:gap-0 md:text-sm">
+          <Link href="/diary" className="transition-colors hover:text-primary sm:mx-2">
             日記ページ（デモ）
           </Link>
-          <span className="hidden sm:inline text-gray-300">|</span>
-          <Link href="/couple" className="hover:text-primary transition-colors sm:mx-2">
+          <span className="hidden text-gray-300 sm:inline">|</span>
+          <Link href="/couple" className="transition-colors hover:text-primary sm:mx-2">
             カップル設定（デモ）
           </Link>
         </div>

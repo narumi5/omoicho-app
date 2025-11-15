@@ -1,60 +1,115 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
+import { FormField } from '@/components/ui/FormField';
+import { Alert } from '@/components/ui/Alert';
+import { useAuth } from '@/contexts/AuthContext';
+
+const loginSchema = z.object({
+  email: z
+    .string({ message: 'メールアドレスを入力してください' })
+    .email({ message: '有効なメールアドレスを入力してください' }),
+  password: z
+    .string({ message: 'パスワードを入力してください' })
+    .min(6, { message: 'パスワードは6文字以上で入力してください' }),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const router = useRouter();
+  const { user, login, loading: authLoading } = useAuth();
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: 実際のログイン処理
-    console.log('Login:', email, password);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  // すでにログイン済みの場合は日記ページにリダイレクト
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.push('/diary');
+    }
+  }, [user, authLoading, router]);
+
+  const onSubmit = async (data: LoginFormData) => {
+    setError('');
+
+    try {
+      await login(data.email, data.password);
+      // 成功時は日記一覧ページへリダイレクト
+      router.push('/diary');
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(err instanceof Error ? err.message : 'ログインに失敗しました');
+    }
   };
 
+  // 認証チェック中は何も表示しない
+  if (authLoading) {
+    return null;
+  }
+
+  // すでにログイン済みの場合は何も表示しない（リダイレクト中）
+  if (user) {
+    return null;
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <Card className="w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6">ログイン</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              メールアドレス
-            </label>
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="email@example.com"
-              required
-            />
+    <div className="flex min-h-screen items-center justify-center bg-gradient-pink p-4">
+      <div className="w-full max-w-md">
+        <Card className="w-full">
+          <h1 className="mb-8 text-center text-3xl font-bold text-primary">ログイン</h1>
+
+          {error && (
+            <Alert variant="error" className="mb-6">
+              {error}
+            </Alert>
+          )}
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <FormField label="メールアドレス" error={errors.email?.message} htmlFor="email">
+              <Input
+                id="email"
+                type="email"
+                placeholder="example@email.com"
+                {...register('email')}
+              />
+            </FormField>
+
+            <FormField label="パスワード" error={errors.password?.message} htmlFor="password">
+              <Input
+                id="password"
+                type="password"
+                placeholder="6文字以上"
+                {...register('password')}
+              />
+            </FormField>
+
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? 'ログイン中...' : 'ログイン'}
+            </Button>
+          </form>
+
+          <div className="mt-6 border-t border-gray-200 pt-6">
+            <p className="mb-3 text-center text-sm text-gray-600">アカウントをお持ちでない方</p>
+            <Button as="link" href="/signup" variant="outline" className="w-full">
+              新規登録
+            </Button>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              パスワード
-            </label>
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
-          </div>
-          <Button type="submit" className="w-full">
-            ログイン
-          </Button>
-        </form>
-        <p className="text-center text-sm text-gray-600 mt-4">
-          アカウントをお持ちでない方は
-          <a href="/signup" className="text-blue-600 hover:underline ml-1">
-            新規登録
-          </a>
-        </p>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }

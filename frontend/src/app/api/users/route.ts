@@ -8,11 +8,11 @@ import { prisma } from '@/lib/prisma';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, name } = body;
+    const { email, name, password } = body;
 
-    if (!email || !name) {
+    if (!email || !name || !password) {
       return NextResponse.json(
-        { error: 'email and name are required' },
+        { error: 'email, name, and password are required' },
         { status: 400 }
       );
     }
@@ -23,16 +23,14 @@ export async function POST(req: NextRequest) {
     });
 
     if (existingUser) {
-      return NextResponse.json(
-        { error: 'Email already exists' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Email already exists' }, { status: 400 });
     }
 
     const user = await prisma.user.create({
       data: {
         email,
         name,
+        password,
       },
     });
 

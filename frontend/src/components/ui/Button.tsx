@@ -1,12 +1,15 @@
 import React from 'react';
+import Link from 'next/link';
 
 interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
   type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'secondary' | 'danger';
+  variant?: 'primary' | 'secondary' | 'danger' | 'outline';
   disabled?: boolean;
   className?: string;
+  href?: string;
+  as?: 'button' | 'link';
 }
 
 export function Button({
@@ -16,23 +19,34 @@ export function Button({
   variant = 'primary',
   disabled = false,
   className = '',
+  href,
+  as = 'button',
 }: ButtonProps) {
-  const baseStyle = 'px-6 py-2.5 rounded-full font-medium transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5';
+  const baseStyle =
+    'inline-flex items-center justify-center px-4 py-2 rounded-full font-medium transition-all active:scale-95';
   const variantStyles = {
-    primary: 'bg-primary text-white hover:bg-primary-dark',
-    secondary: 'bg-surface text-gray-700 hover:bg-gray-200 border border-gray-300',
-    danger: 'bg-red-500 text-white hover:bg-red-600',
+    primary: 'bg-primary text-white hover:bg-primary-dark shadow-lg hover:shadow-xl',
+    secondary:
+      'bg-surface text-gray-700 hover:bg-gray-200 border border-gray-300 shadow-md hover:shadow-lg',
+    danger: 'bg-red-500 text-white hover:bg-red-600 shadow-lg hover:shadow-xl',
+    outline:
+      'bg-white text-primary border-2 border-primary hover:bg-surface-pink shadow-md hover:shadow-lg',
   };
 
+  const classes = `${baseStyle} ${variantStyles[variant]} ${
+    disabled ? 'transform-none cursor-not-allowed opacity-50' : ''
+  } ${className}`;
+
+  if (as === 'link' && href) {
+    return (
+      <Link href={href} className={classes}>
+        {children}
+      </Link>
+    );
+  }
+
   return (
-    <button
-      type={type}
-      onClick={onClick}
-      disabled={disabled}
-      className={`${baseStyle} ${variantStyles[variant]} ${
-        disabled ? 'opacity-50 cursor-not-allowed transform-none' : ''
-      } ${className}`}
-    >
+    <button type={type} onClick={onClick} disabled={disabled} className={classes}>
       {children}
     </button>
   );
