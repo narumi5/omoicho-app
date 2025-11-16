@@ -13,10 +13,17 @@ export const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // 401エラーの場合、認証が必要なページのみリダイレクト
     if (error.response?.status === 401) {
-      // 未認証エラーの場合、ログインページにリダイレクト（クライアント側で処理）
-      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
+      if (typeof window !== 'undefined') {
+        const pathname = window.location.pathname;
+        // 公開ページ（/, /login, /signup）以外でリダイレクト
+        const publicPaths = ['/', '/login', '/signup'];
+        const isPublicPath = publicPaths.some((path) => pathname === path);
+
+        if (!isPublicPath) {
+          window.location.href = '/login';
+        }
       }
     }
     return Promise.reject(error);
