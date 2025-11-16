@@ -37,8 +37,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await api.get('/api/auth/me');
       setUser(response.data.data);
     } catch (error: any) {
-      // 404エラーは未ログイン状態なので、エラーログを出さない
-      if (error?.response?.status !== 404) {
+      // 404/401エラーは未ログイン状態なので、エラーログを出さない
+      const status = error?.response?.status;
+      if (status !== 404 && status !== 401) {
         logError('Refresh user', error);
       }
       setUser(null);
