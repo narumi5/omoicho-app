@@ -13,7 +13,18 @@ export function DiaryCard({ diary }: DiaryCardProps) {
     <Card className="mb-4">
       <div className="mb-2">
         <h3 className="text-lg font-bold">{diary.author?.name}</h3>
-        <p className="text-sm text-gray-500">{new Date(diary.date).toLocaleDateString('ja-JP')}</p>
+        <p className="text-sm text-gray-500">
+          {new Date(diary.date).toLocaleDateString('ja-JP', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}
+          （
+          {new Date(diary.date).toLocaleDateString('ja-JP', {
+            weekday: 'short',
+          })}
+          ）
+        </p>
       </div>
       <p
         className="mb-4 overflow-hidden break-words text-gray-800"

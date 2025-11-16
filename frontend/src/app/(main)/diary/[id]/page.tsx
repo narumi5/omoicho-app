@@ -67,8 +67,12 @@ export default function DiaryDetailPage() {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
-                weekday: 'long',
               })}
+              （
+              {new Date(diary.date).toLocaleDateString('ja-JP', {
+                weekday: 'short',
+              })}
+              ）
             </p>
           </div>
 
