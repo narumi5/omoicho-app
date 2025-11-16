@@ -5,19 +5,17 @@ import { Button } from '@/components/ui/Button';
 import { VALIDATION } from '@/lib/constants';
 
 interface DiaryFormProps {
-  onSubmit: (content: string, isPrivate: boolean) => void;
+  onSubmit: (content: string) => void;
 }
 
 export function DiaryForm({ onSubmit }: DiaryFormProps) {
   const [content, setContent] = useState('');
-  const [isPrivate, setIsPrivate] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;
-    onSubmit(content, isPrivate);
+    onSubmit(content);
     setContent('');
-    setIsPrivate(false);
   };
 
   return (
@@ -33,16 +31,7 @@ export function DiaryForm({ onSubmit }: DiaryFormProps) {
       <p className="mb-4 text-right text-xs text-gray-500">
         {content.length} / {VALIDATION.DIARY_MAX_LENGTH}文字
       </p>
-      <div className="flex items-center justify-between">
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            checked={isPrivate}
-            onChange={(e) => setIsPrivate(e.target.checked)}
-            className="mr-2"
-          />
-          <span className="text-[12px] text-gray-700 sm:text-sm">プライベート（自分だけ）</span>
-        </label>
+      <div className="flex items-center justify-end">
         <Button type="submit">投稿</Button>
       </div>
     </form>

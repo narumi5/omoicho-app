@@ -3,22 +3,34 @@ import { prisma } from '@/lib/prisma';
 
 /**
  * 日記一覧取得
- * GET /api/diaries?coupleId=xxx
+ * GET /api/diaries?coupleId=xxx&page=1&limit=10
  */
 export async function GET(req: NextRequest) {
   try {
     // TODO: 認証実装後にユーザーIDを取得
     const searchParams = req.nextUrl.searchParams;
     const coupleId = searchParams.get('coupleId');
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '10', 10);
 
     if (!coupleId) {
       return NextResponse.json({ error: 'coupleId is required' }, { status: 400 });
     }
 
+    // ページネーションの計算
+    const skip = (page - 1) * limit;
+
+    // 総件数を取得
+    const total = await prisma.diary.count({
+      where: {
+        coupleId,
+      },
+    });
+
+    // 日記を取得
     const diaries = await prisma.diary.findMany({
       where: {
         coupleId,
-        // TODO: isPrivate を考慮したフィルタリング
       },
       include: {
         author: {
@@ -31,9 +43,19 @@ export async function GET(req: NextRequest) {
       orderBy: {
         date: 'desc',
       },
+      skip,
+      take: limit,
     });
 
-    return NextResponse.json(diaries);
+    return NextResponse.json({
+      data: diaries,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     console.error('Error fetching diaries:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -48,7 +70,7 @@ export async function POST(req: NextRequest) {
   try {
     // TODO: 認証実装後にユーザーIDを取得
     const body = await req.json();
-    const { content, isPrivate, authorId, coupleId, images } = body;
+    const { content, authorId, coupleId, images } = body;
 
     // バリデーション
     if (!content || !authorId || !coupleId) {
@@ -66,7 +88,6 @@ export async function POST(req: NextRequest) {
     const diary = await prisma.diary.create({
       data: {
         content,
-        isPrivate: isPrivate || false,
         authorId,
         coupleId,
         images: images || [],

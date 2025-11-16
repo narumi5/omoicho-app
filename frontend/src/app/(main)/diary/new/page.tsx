@@ -18,7 +18,7 @@ export default function NewDiaryPage() {
   const { showSuccess, showError } = useToast();
   const { coupleId, coupleData, loading, error } = useUserWithCouple();
 
-  const handleSubmit = async (content: string, isPrivate: boolean) => {
+  const handleSubmit = async (content: string) => {
     if (!user || !coupleId) {
       showError('ログインとカップル設定が必要です');
       return;
@@ -27,7 +27,6 @@ export default function NewDiaryPage() {
     try {
       await createDiary({
         content,
-        isPrivate,
         authorId: user.id,
         coupleId: coupleId,
       });

@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Loading } from '@/components/ui/Loading';
+import { Pagination } from '@/components/ui/Pagination';
 import { PenLine } from 'lucide-react';
 import { getMe } from '@/lib/api/auth';
 import { createCouple, joinCouple, getCoupleInfo } from '@/lib/api/couples';
@@ -23,6 +24,7 @@ export default function DiaryPage() {
   const [inviteCode, setInviteCode] = useState('');
   const [error, setError] = useState('');
   const [userLoading, setUserLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -44,7 +46,10 @@ export default function DiaryPage() {
     fetchUserData();
   }, []);
 
-  const { diaries, loading } = useDiaries(coupleId || '');
+  const { diaries, loading, pagination } = useDiaries(coupleId || '', {
+    page: currentPage,
+    limit: 10,
+  });
 
   const handleCreateCouple = async () => {
     try {
@@ -125,7 +130,16 @@ export default function DiaryPage() {
           {loading ? (
             <div className="py-8 text-center text-gray-500">読み込み中...</div>
           ) : (
-            <DiaryList diaries={diaries} />
+            <>
+              <DiaryList diaries={diaries} />
+              {pagination && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={pagination.totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              )}
+            </>
           )}
         </div>
       </div>

@@ -48,9 +48,6 @@ model Diary {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // プライベートフラグ（true: 自分のみ、false: カップル共有）
-  isPrivate Boolean  @default(false)
-
   // S3画像URL（最大3枚）
   images    String[] @default([])
 
