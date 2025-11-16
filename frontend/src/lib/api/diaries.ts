@@ -5,7 +5,6 @@ export interface Diary {
   id: string;
   content: string;
   date: string;
-  isPrivate: boolean;
   images: string[];
   author?: {
     id: string;
@@ -16,7 +15,6 @@ export interface Diary {
 
 export interface CreateDiaryRequest {
   content: string;
-  isPrivate: boolean;
   authorId: string;
   coupleId: string;
 }

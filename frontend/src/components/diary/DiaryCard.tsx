@@ -11,16 +11,20 @@ interface DiaryCardProps {
 export function DiaryCard({ diary }: DiaryCardProps) {
   return (
     <Card className="mb-4">
-      <div className="mb-2 flex items-start justify-between">
-        <div>
-          <h3 className="text-lg font-bold">{diary.author?.name}</h3>
-          <p className="text-sm text-gray-500">
-            {new Date(diary.date).toLocaleDateString('ja-JP')}
-          </p>
-        </div>
-        {diary.isPrivate && (
-          <span className="rounded bg-gray-200 px-2 py-1 text-xs text-gray-700">プライベート</span>
-        )}
+      <div className="mb-2">
+        <h3 className="text-lg font-bold">{diary.author?.name}</h3>
+        <p className="text-sm text-gray-500">
+          {new Date(diary.date).toLocaleDateString('ja-JP', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}
+          （
+          {new Date(diary.date).toLocaleDateString('ja-JP', {
+            weekday: 'short',
+          })}
+          ）
+        </p>
       </div>
       <p
         className="mb-4 overflow-hidden break-words text-gray-800"

@@ -1,23 +1,29 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { VALIDATION } from '@/lib/constants';
 
 interface DiaryFormProps {
-  onSubmit: (content: string, isPrivate: boolean) => void;
+  onSubmit: (content: string) => void;
+  initialContent?: string;
+  isEdit?: boolean;
 }
 
-export function DiaryForm({ onSubmit }: DiaryFormProps) {
-  const [content, setContent] = useState('');
-  const [isPrivate, setIsPrivate] = useState(false);
+export function DiaryForm({ onSubmit, initialContent = '', isEdit = false }: DiaryFormProps) {
+  const [content, setContent] = useState(initialContent);
+
+  useEffect(() => {
+    setContent(initialContent);
+  }, [initialContent]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;
-    onSubmit(content, isPrivate);
-    setContent('');
-    setIsPrivate(false);
+    onSubmit(content);
+    if (!isEdit) {
+      setContent('');
+    }
   };
 
   return (
@@ -33,17 +39,8 @@ export function DiaryForm({ onSubmit }: DiaryFormProps) {
       <p className="mb-4 text-right text-xs text-gray-500">
         {content.length} / {VALIDATION.DIARY_MAX_LENGTH}文字
       </p>
-      <div className="flex items-center justify-between">
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            checked={isPrivate}
-            onChange={(e) => setIsPrivate(e.target.checked)}
-            className="mr-2"
-          />
-          <span className="text-[12px] text-gray-700 sm:text-sm">プライベート（自分だけ）</span>
-        </label>
-        <Button type="submit">投稿</Button>
+      <div className="flex items-center justify-end">
+        <Button type="submit">{isEdit ? '更新' : '投稿'}</Button>
       </div>
     </form>
   );

@@ -13,7 +13,7 @@ export function Alert({ variant = 'info', children, className = '' }: AlertProps
     error: 'border-red-200 bg-red-50 text-red-600',
     success: 'border-green-200 bg-green-50 text-green-600',
     warning: 'border-yellow-200 bg-yellow-50 text-yellow-600',
-    info: 'border-blue-200 bg-blue-50 text-blue-600',
+    info: 'border-pink-200 bg-pink-50 text-primary',
   };
 
   return (

@@ -20,7 +20,6 @@ export interface Diary {
   id: string;
   content: string;
   date: Date;
-  isPrivate: boolean;
   images: string[];
   authorId: string;
   author?: {
