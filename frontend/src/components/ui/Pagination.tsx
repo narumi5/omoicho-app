@@ -50,10 +50,9 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
     <div className="flex items-center justify-center gap-2 py-8">
       <Button
         variant="outline"
-        size="sm"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="flex items-center gap-1"
+        className="flex items-center gap-1 px-3 py-1.5 text-sm"
       >
         <ChevronLeft className="h-4 w-4" />
         前へ
@@ -73,9 +72,8 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
             <Button
               key={page}
               variant={currentPage === page ? 'primary' : 'outline'}
-              size="sm"
               onClick={() => onPageChange(page as number)}
-              className="min-w-[40px]"
+              className="min-w-[40px] px-3 py-1.5 text-sm"
             >
               {page}
             </Button>
@@ -85,10 +83,9 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
 
       <Button
         variant="outline"
-        size="sm"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="flex items-center gap-1"
+        className="flex items-center gap-1 px-3 py-1.5 text-sm"
       >
         次へ
         <ChevronRight className="h-4 w-4" />

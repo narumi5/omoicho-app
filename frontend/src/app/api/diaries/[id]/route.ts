@@ -30,11 +30,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Diary not found' }, { status: 404 });
     }
 
-    // プライベート日記の場合、作成者のみ閲覧可能
-    if (diary.isPrivate && diary.authorId !== payload.userId) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-
     // カップルメンバーかチェック
     const user = await prisma.user.findUnique({
       where: { id: payload.userId },
@@ -48,8 +43,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       id: diary.id,
       content: diary.content,
       date: diary.date,
-      isPrivate: diary.isPrivate,
-      images: [],
+      images: diary.images,
       author: diary.author,
     });
   } catch (error) {
@@ -66,14 +60,31 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params;
     const body = await req.json();
-    const { content, isPrivate, images } = body;
+    const { content, images } = body;
+
+    // バリデーション
+    if (!content) {
+      return NextResponse.json({ error: 'content is required' }, { status: 400 });
+    }
+
+    // 画像は最大3枚
+    if (images && images.length > 3) {
+      return NextResponse.json({ error: 'Maximum 3 images allowed' }, { status: 400 });
+    }
 
     const diary = await prisma.diary.update({
       where: { id },
       data: {
         content,
-        isPrivate,
-        images,
+        images: images || [],
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
 

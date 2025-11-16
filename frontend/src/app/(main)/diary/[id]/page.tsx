@@ -60,23 +60,16 @@ export default function DiaryDetailPage() {
         </div>
 
         <Card className="w-full">
-          <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
-            <div className="min-w-0 flex-1">
-              <h2 className="truncate text-xl font-bold">{diary.author?.name}</h2>
-              <p className="text-sm text-gray-500">
-                {new Date(diary.date).toLocaleDateString('ja-JP', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  weekday: 'long',
-                })}
-              </p>
-            </div>
-            {diary.isPrivate && (
-              <span className="shrink-0 rounded bg-gray-200 px-3 py-1 text-sm text-gray-700">
-                プライベート
-              </span>
-            )}
+          <div className="mb-4">
+            <h2 className="text-xl font-bold">{diary.author?.name}</h2>
+            <p className="text-sm text-gray-500">
+              {new Date(diary.date).toLocaleDateString('ja-JP', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long',
+              })}
+            </p>
           </div>
 
           <div

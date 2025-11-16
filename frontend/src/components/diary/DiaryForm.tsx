@@ -1,21 +1,29 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { VALIDATION } from '@/lib/constants';
 
 interface DiaryFormProps {
   onSubmit: (content: string) => void;
+  initialContent?: string;
+  isEdit?: boolean;
 }
 
-export function DiaryForm({ onSubmit }: DiaryFormProps) {
-  const [content, setContent] = useState('');
+export function DiaryForm({ onSubmit, initialContent = '', isEdit = false }: DiaryFormProps) {
+  const [content, setContent] = useState(initialContent);
+
+  useEffect(() => {
+    setContent(initialContent);
+  }, [initialContent]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;
     onSubmit(content);
-    setContent('');
+    if (!isEdit) {
+      setContent('');
+    }
   };
 
   return (
@@ -32,7 +40,7 @@ export function DiaryForm({ onSubmit }: DiaryFormProps) {
         {content.length} / {VALIDATION.DIARY_MAX_LENGTH}文字
       </p>
       <div className="flex items-center justify-end">
-        <Button type="submit">投稿</Button>
+        <Button type="submit">{isEdit ? '更新' : '投稿'}</Button>
       </div>
     </form>
   );

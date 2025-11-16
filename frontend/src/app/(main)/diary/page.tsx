@@ -38,13 +38,15 @@ export default function DiaryPage() {
         }
       } catch (error) {
         console.error('Failed to fetch user data:', error);
+        showError('セッションが切れました。再ログインしてください');
+        setTimeout(() => router.push('/login'), 1500);
       } finally {
         setUserLoading(false);
       }
     };
 
     fetchUserData();
-  }, []);
+  }, [router, showError]);
 
   const { diaries, loading, pagination } = useDiaries(coupleId || '', {
     page: currentPage,
