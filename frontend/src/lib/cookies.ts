@@ -17,7 +17,8 @@ export interface CookieOptions {
  */
 const defaultCookieOptions: CookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production', // 本番環境のみHTTPS必須
+  // HTTPS必須（環境変数DISABLE_SECURE_COOKIE=trueで無効化可能）
+  secure: process.env.DISABLE_SECURE_COOKIE !== 'true' && process.env.NODE_ENV === 'production',
   sameSite: 'lax',
   path: '/',
   maxAge: AUTH.COOKIE_MAX_AGE,
