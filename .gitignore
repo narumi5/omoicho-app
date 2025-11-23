@@ -30,7 +30,7 @@ Thumbs.db
 *.swo
 
 # Prisma
-prisma/migrations/
+# prisma/migrations/ should be tracked in git
 
 # Docker
 .docker/
