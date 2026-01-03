@@ -32,9 +32,15 @@ export default function LoginPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    setValue,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
+
+  const fillDemoAccount = () => {
+    setValue('email', 'user1@example.com');
+    setValue('password', 'password123');
+  };
 
   // すでにログイン済みの場合は日記ページにリダイレクト
   useEffect(() => {
@@ -106,6 +112,28 @@ export default function LoginPage() {
             <p className="mb-3 text-center text-sm text-gray-600">アカウントをお持ちでない方</p>
             <Button as="link" href="/signup" variant="outline" className="w-full">
               新規登録
+            </Button>
+          </div>
+
+          <div className="mt-6 rounded-lg bg-primary/10 p-4">
+            <p className="mb-2 text-center text-xs font-semibold text-primary">
+              ポートフォリオ用デモアカウント
+            </p>
+            <div className="mb-3 space-y-1 text-xs text-primary/80">
+              <p className="text-center">
+                <span className="font-medium">Email:</span> user1@example.com
+              </p>
+              <p className="text-center">
+                <span className="font-medium">Password:</span> password123
+              </p>
+            </div>
+            <Button
+              type="button"
+              onClick={fillDemoAccount}
+              variant="outline"
+              className="w-full border-primary text-primary hover:bg-primary/10"
+            >
+              自動入力する
             </Button>
           </div>
         </Card>
