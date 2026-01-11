@@ -38,7 +38,7 @@ export default function LoginPage() {
   });
 
   const fillDemoAccount = () => {
-    setValue('email', 'user1@example.com');
+    setValue('email', 'user1@omoicho.com');
     setValue('password', 'password123');
   };
 
@@ -121,7 +121,7 @@ export default function LoginPage() {
             </p>
             <div className="mb-3 space-y-1 text-xs text-primary/80">
               <p className="text-center">
-                <span className="font-medium">Email:</span> user1@example.com
+                <span className="font-medium">Email:</span> user1@omoicho.com
               </p>
               <p className="text-center">
                 <span className="font-medium">Password:</span> password123

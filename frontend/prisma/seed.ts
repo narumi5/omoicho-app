@@ -26,7 +26,7 @@ async function main() {
   // ユーザー1を作成
   const user1 = await prisma.user.create({
     data: {
-      email: 'user1@example.com',
+      email: 'user1@omoicho.com',
       password: hashedPassword,
       name: 'ユーザー1',
       coupleId: couple.id,
@@ -38,7 +38,7 @@ async function main() {
   // ユーザー2を作成
   const user2 = await prisma.user.create({
     data: {
-      email: 'user2@example.com',
+      email: 'user2@omoicho.com',
       password: hashedPassword,
       name: 'ユーザー2',
       coupleId: couple.id,
